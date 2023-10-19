@@ -1,0 +1,48 @@
+--- msieve/common/driver.org.c	2023-10-19 18:10:19.806642391 +0200
++++ msieve/common/driver.c	2023-10-19 18:12:01.172307651 +0200
+@@ -14,6 +14,9 @@
+ 
+ #include <common.h>
+ 
++// progress callback
++extern void publishInputNumber(char *input_number);
++
+ /*--------------------------------------------------------------------*/
+ msieve_obj * msieve_obj_new(char *input_integer, uint32 flags,
+ 			    char *savefile_name, char *logfile_name,
+@@ -204,6 +207,7 @@
+ #endif
+ 	logprintf(obj, "factoring %s (%d digits)\n", 
+ 				n_string, strlen(n_string));
++	publishInputNumber(n_string);
+ 
+ 	/* handle trivial inputs */
+ 
+--- msieve/mpqs/sieve.org.c	2023-10-19 18:14:30.629015920 +0200
++++ msieve/mpqs/sieve.c	2023-10-19 18:17:59.380302373 +0200
+@@ -15,6 +15,13 @@
+ #include <common.h>
+ #include "mpqs.h"
+ 
++// progress callback
++extern void publishState(uint32 num_relations,
++			      uint32 full_relations,
++			      uint32 combined_relations,
++			      uint32 partial_relations,
++			      uint32 max_relations);
++
+ static void collect_relations(sieve_conf_t *conf,
+ 			      uint32 target_relations,
+ 			      qs_core_sieve_fcn core_sieve_fcn);
+@@ -617,6 +624,11 @@
+ 
+ 	    	if (obj->flags & (MSIEVE_FLAG_USE_LOGFILE |
+ 	    		   	  MSIEVE_FLAG_LOG_TO_STDOUT)) {
++			publishState(num_relations,
++				conf->num_relations,
++				conf->num_cycles + conf->components - conf->vertices,
++				conf->num_cycles,
++				max_relations);
+ 			fprintf(stderr, "%u relations (%u full + "
+ 				"%u combined from %u partial), need %u\r",
+ 					num_relations,

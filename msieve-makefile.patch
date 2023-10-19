@@ -1,0 +1,31 @@
+--- msieve/Makefile.org	2023-10-17 23:04:50.051351933 +0200
++++ msieve/Makefile	2023-10-17 23:04:59.288041077 +0200
+@@ -20,7 +20,7 @@
+ # get overridden by architecture-specific builds)
+ CC = gcc
+ WARN_FLAGS = -Wall -W
+-OPT_FLAGS = -O3 -fomit-frame-pointer -march=native \
++OPT_FLAGS = -O3 -fomit-frame-pointer \
+ 	    -D_FILE_OFFSET_BITS=64 -DNDEBUG -D_LARGEFILE64_SOURCE
+ 
+ # use := instead of = so we only run the following once
+@@ -29,7 +29,7 @@
+ 	SVN_VERSION := unknown
+ endif
+ 
+-CFLAGS = $(OPT_FLAGS) $(MACHINE_FLAGS) $(WARN_FLAGS) \
++CFLAGS += $(OPT_FLAGS) $(MACHINE_FLAGS) $(WARN_FLAGS) \
+ 	 	-DMSIEVE_SVN_VERSION="\"$(SVN_VERSION)\"" \
+ 		-I. -Iaprcl -Iinclude -Ignfs -Ignfs/poly -Ignfs/poly/stage1
+ 
+@@ -272,8 +272,8 @@
+ 
+ all: $(COMMON_OBJS) $(QS_OBJS) $(NFS_OBJS) $(GPU_OBJS)
+ 	rm -f libmsieve.a
+-	ar r libmsieve.a $(COMMON_OBJS) $(QS_OBJS) $(NFS_OBJS)
+-	ranlib libmsieve.a
++	$(AR) r libmsieve.a $(COMMON_OBJS) $(QS_OBJS) $(NFS_OBJS)
++	$(RANLIB) libmsieve.a
+ 	$(CC) $(CFLAGS) demo.c -o msieve $(LDFLAGS) \
+ 			libmsieve.a $(LIBS)
+ 
